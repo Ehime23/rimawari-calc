@@ -24,6 +24,11 @@
       margin-top: 10px;
       font-size: 16px;
     }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
     #result {
       margin-top: 20px;
       font-size: 18px;
@@ -35,22 +40,50 @@
 <body>
   <div class="container">
     <h2>表面利回り計算</h2>
-    <input type="number" id="price" placeholder="物件価格（万円）">
-    <input type="number" id="income" placeholder="年間収入（万円）">
-    <button onclick="calc()">計算する</button>
+
+    <label for="price">物件価格（万円）</label>
+    <input type="number" id="price" placeholder="例：2400">
+
+    <label for="income">年間家賃収入（万円）</label>
+    <input type="number" id="income" placeholder="例：180">
+
+    <button onclick="calcYield()">利回りを計算</button>
+
+    <label for="sellPrice">売却金額（万円）</label>
+    <input type="number" id="sellPrice" placeholder="例：2000">
+
+    <button onclick="calcSellYield()">売却価格に対する利回り</button>
+
     <div id="result"></div>
   </div>
 
   <script>
-    function calc() {
+    function calcYield() {
       const price = parseFloat(document.getElementById('price').value);
       const income = parseFloat(document.getElementById('income').value);
+      const resultDiv = document.getElementById('result');
+
       if (!price || !income || price <= 0) {
-        document.getElementById('result').textContent = '正しい数値を入力してください';
+        resultDiv.textContent = '正しい数値を入力してください。';
         return;
       }
-      const result = (income / price) * 100;
-      document.getElementById('result').textContent = `表面利回り：${result.toFixed(2)}％`;
+
+      const yieldValue = (income / price) * 100;
+      resultDiv.textContent = `表面利回り：${yieldValue.toFixed(2)}％（物件価格 ${price}万円 / 年間収入 ${income}万円）`;
+    }
+
+    function calcSellYield() {
+      const income = parseFloat(document.getElementById('income').value);
+      const sellPrice = parseFloat(document.getElementById('sellPrice').value);
+      const resultDiv = document.getElementById('result');
+
+      if (!sellPrice || !income || sellPrice <= 0) {
+        resultDiv.textContent = '売却価格と収入を入力してください。';
+        return;
+      }
+
+      const yieldValue = (income / sellPrice) * 100;
+      resultDiv.textContent = `売却価格に対する利回り：${yieldValue.toFixed(2)}％（売却価格 ${sellPrice}万円 / 年間収入 ${income}万円）`;
     }
   </script>
 </body>
