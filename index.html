@@ -49,6 +49,11 @@
 
     <button onclick="calcYield()">利回りを計算</button>
 
+    <hr>
+
+    <label for="sellIncome">年間家賃収入（万円）</label>
+    <input type="number" id="sellIncome" placeholder="例：180">
+
     <label for="sellPrice">売却金額（万円）</label>
     <input type="number" id="sellPrice" placeholder="例：2000">
 
@@ -73,7 +78,7 @@
     }
 
     function calcSellYield() {
-      const income = parseFloat(document.getElementById('income').value);
+      const income = parseFloat(document.getElementById('sellIncome').value);
       const sellPrice = parseFloat(document.getElementById('sellPrice').value);
       const resultDiv = document.getElementById('result');
 
