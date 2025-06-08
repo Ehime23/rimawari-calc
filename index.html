@@ -1,125 +1,36 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>表面利回り計算機</title>
+  <title>宮里式 表面利回り計算機（月額家賃対応）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="apple-touch-icon" href="rimawari-calc-icon.png">
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log("Service Worker registered"))
+        .catch(err => console.error("SW registration failed:", err));
     }
-    .container {
-      max-width: 400px;
-      background: white;
-      padding: 20px;
-      margin: auto;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .section {
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-    .section1 { background-color: #e8f5e9; }   /* 緑：目標利回り */
-    .section2 { background-color: #e0f7fa; }   /* 青：基本利回り */
-    .section3 { background-color: #fff3e0; }   /* オレンジ：売却利回り */
-    .result {
-      margin-top: 10px;
-      font-size: 16px;
-      color: #333;
-      text-align: center;
-    }
-  </style>
+  </script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h2>表面利回り計算</h2>
+    <h1>表面利回り計算機</h1>
+    <label>物件価格（万円）</label>
+    <input id="price" type="number">
 
-    <div class="section section1">
-      <label for="targetYield">希望利回り（%）</label>
-      <input type="number" id="targetYield" placeholder="例：7.5">
-      <label for="expectedIncome">年間家賃収入（万円）</label>
-      <input type="number" id="expectedIncome" placeholder="例：180">
-      <button onclick="calcTargetPrice()">売却価格を逆算</button>
-      <div id="result1" class="result"></div>
-    </div>
+    <label>月額家賃収入（万円）</label>
+    <input id="monthlyIncome" type="number" oninput="updateAnnualIncome()">
 
-    <div class="section section2">
-      <label for="price">物件価格（万円）</label>
-      <input type="number" id="price" placeholder="例：2400">
-      <label for="income">年間家賃収入（万円）</label>
-      <input type="number" id="income" placeholder="例：180">
-      <button onclick="calcYield()">利回りを計算</button>
-      <div id="result2" class="result"></div>
-    </div>
+    <label>年間家賃収入（万円）</label>
+    <input id="annualIncome" type="number" readonly>
 
-    <div class="section section3">
-      <label for="sellIncome">年間家賃収入（万円）</label>
-      <input type="number" id="sellIncome" placeholder="例：180">
-      <label for="sellPrice">売却金額（万円）</label>
-      <input type="number" id="sellPrice" placeholder="例：2000">
-      <button onclick="calcSellYield()">売却価格に対する利回り</button>
-      <div id="result3" class="result"></div>
-    </div>
+    <button onclick="calculate()">計算する</button>
+    <div id="result" style="margin-top: 20px; font-size: 18px;"></div>
   </div>
-
-  <script>
-    function calcTargetPrice() {
-      const targetYield = parseFloat(document.getElementById('targetYield').value);
-      const income = parseFloat(document.getElementById('expectedIncome').value);
-      const resultDiv = document.getElementById('result1');
-
-      if (!targetYield || !income || targetYield <= 0) {
-        resultDiv.textContent = '希望利回りと収入を入力してください。';
-        return;
-      }
-
-      const price = income / (targetYield / 100);
-      resultDiv.textContent = `希望利回り ${targetYield.toFixed(2)}％ における売却価格は：約 ${price.toFixed(2)} 万円`;
-    }
-
-    function calcYield() {
-      const price = parseFloat(document.getElementById('price').value);
-      const income = parseFloat(document.getElementById('income').value);
-      const resultDiv = document.getElementById('result2');
-
-      if (!price || !income || price <= 0) {
-        resultDiv.textContent = '正しい数値を入力してください。';
-        return;
-      }
-
-      const yieldValue = (income / price) * 100;
-      resultDiv.textContent = `表面利回り：${yieldValue.toFixed(2)}％（物件価格 ${price}万円 / 年間収入 ${income}万円）`;
-    }
-
-    function calcSellYield() {
-      const income = parseFloat(document.getElementById('sellIncome').value);
-      const sellPrice = parseFloat(document.getElementById('sellPrice').value);
-      const resultDiv = document.getElementById('result3');
-
-      if (!sellPrice || !income || sellPrice <= 0) {
-        resultDiv.textContent = '売却価格と収入を入力してください。';
-        return;
-      }
-
-      const yieldValue = (income / sellPrice) * 100;
-      resultDiv.textContent = `売却価格に対する利回り：${yieldValue.toFixed(2)}％（売却価格 ${sellPrice}万円 / 年間収入 ${income}万円）`;
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
