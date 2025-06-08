@@ -1,161 +1,54 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>利回り計算</title>
+  <title>竹1 総合不動産計算機</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f7f9fb;
-      padding: 20px;
-    }
-    .section {
-      background-color: #ffffff;
-      border-left: 10px solid;
-      padding: 16px;
-      margin-bottom: 20px;
-      border-radius: 6px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.05);
-    }
-    .section:nth-child(2) { border-color: #FF9800; }
-    .section:nth-child(3) { border-color: #4CAF50; }
-    .section:nth-child(4) { border-color: #2196F3; }
-    .section:nth-child(5) { border-color: #9C27B0; }
-
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-    button {
-      background-color: #333;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-    }
-    .result {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="container">
+    <h1>竹1 総合不動産計算機</h1>
 
-  <h1>利回り計算</h1>
-
-  <div class="section">
     <h2>① 希望利回りから売却価格を逆算</h2>
     <label>希望利回り（%）</label>
-    <input id="desiredYield" type="number">
+    <input id="targetYield" type="number" placeholder="例：8">
     <label>年間家賃収入（万円）</label>
-    <input id="income3" type="number">
-    <button onclick="calcPriceFromYield()">売却価格を逆算</button>
-    <div id="priceResult" class="result"></div>
-  </div>
+    <input id="annualRent1" type="number" placeholder="例：96">
+    <button onclick="reverseFromYield()">📐 売却価格を逆算</button>
+    <p id="reverseResult"></p>
 
-  <div class="section">
     <h2>② 表面利回りを計算</h2>
     <label>物件価格（万円）</label>
-    <input id="price" type="number">
+    <input id="propertyPrice2" type="number" placeholder="例：1200">
     <label>年間家賃収入（万円）</label>
-    <input id="income" type="number">
-    <button onclick="calcYield()">利回りを計算</button>
-    <div id="yieldResult" class="result"></div>
-  </div>
+    <input id="annualRent2" type="number" placeholder="例：96">
+    <button onclick="calculateYield()">📊 利回りを計算</button>
+    <p id="yieldResult2"></p>
 
-  <div class="section">
     <h2>③ 売却価格に対する利回り</h2>
     <label>年間家賃収入（万円）</label>
-    <input id="income2" type="number">
-    <label>売却金額（万円）</label>
-    <input id="price2" type="number">
-    <button onclick="calcYield2()">売却価格に対する利回り</button>
-    <div id="yieldResult2" class="result"></div>
+    <input id="annualRent3" type="number" placeholder="例：96">
+    <label>売却価格（万円）</label>
+    <input id="sellingPrice3" type="number" placeholder="例：1300">
+    <button onclick="calculateSellingYield()">📈 売却利回りを計算</button>
+    <p id="sellingYieldResult"></p>
+
+    <h2>④ 表面利回り・仲介手数料（新ルール対応）</h2>
+    <label>物件価格（万円）</label>
+    <input id="price" type="number" placeholder="例：1200">
+    <label>月額家賃収入（万円）</label>
+    <input id="monthlyIncome" type="number" placeholder="例：8.5">
+    <button onclick="calculateAll()">📊 一括計算</button>
+
+    <h3>📋 結果</h3>
+    <p id="displayPrice"></p>
+    <p id="displayRent"></p>
+    <p id="yieldResult"></p>
+    <p id="feeResult"></p>
   </div>
 
-  <div class="section">
-    <h2>④ ローン返済額の計算</h2>
-    <label>合計借入金額（万円）</label>
-    <input id="loanAmount" type="number">
-    <label>頭金（万円）</label>
-    <input id="downPayment" type="number">
-    <label>金利（年利 %）</label>
-    <input id="interestRate" type="number">
-    <label>返済期間（年）</label>
-    <input id="loanYears" type="number">
-    <label>返済方式</label>
-    <select id="repaymentType">
-      <option value="annuity">元利均等</option>
-      <option value="principal">元金均等</option>
-    </select>
-    <button onclick="calcLoan()">返済額を計算</button>
-    <div id="loanResult" class="result"></div>
-  </div>
-
-  <script>
-    function calcYield() {
-      const price = parseFloat(document.getElementById("price").value);
-      const income = parseFloat(document.getElementById("income").value);
-      if (!price || !income) return;
-      const result = (income / price * 100).toFixed(2);
-      document.getElementById("yieldResult").innerText = `表面利回りは約 ${result}% です。`;
-    }
-
-    function calcYield2() {
-      const price = parseFloat(document.getElementById("price2").value);
-      const income = parseFloat(document.getElementById("income2").value);
-      if (!price || !income) return;
-      const result = (income / price * 100).toFixed(2);
-      document.getElementById("yieldResult2").innerText = `利回りは約 ${result}% です。`;
-    }
-
-    function calcPriceFromYield() {
-      const yield = parseFloat(document.getElementById("desiredYield").value);
-      const income = parseFloat(document.getElementById("income3").value);
-      if (!yield || !income) return;
-      const price = (income / (yield / 100)).toFixed(2);
-      document.getElementById("priceResult").innerText =
-        `希望利回り ${yield.toFixed(2)}% における売却価格は：約 ${price} 万円 です。`;
-    }
-
-    function calcLoan() {
-      const loan = parseFloat(document.getElementById("loanAmount").value) - parseFloat(document.getElementById("downPayment").value);
-      const annualRate = parseFloat(document.getElementById("interestRate").value) / 100;
-      const years = parseFloat(document.getElementById("loanYears").value);
-      const repaymentType = document.getElementById("repaymentType").value;
-      const months = years * 12;
-      if (!loan || !annualRate || !years) return;
-
-      let monthlyPayment = 0;
-      let yearlyPayment = 0;
-
-      if (repaymentType === "annuity") {
-        const monthlyRate = annualRate / 12;
-        monthlyPayment = loan * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
-        yearlyPayment = monthlyPayment * 12;
-        document.getElementById("loanResult").innerText =
-          `【元利均等】月々返済額：約 ${monthlyPayment.toFixed(0)} 円／年間：約 ${yearlyPayment.toFixed(0)} 円`;
-      } else {
-        const monthlyPrincipal = loan / months;
-        const firstMonthInterest = loan * (annualRate / 12);
-        const firstMonthTotal = monthlyPrincipal + firstMonthInterest;
-        const yearlyEstimate = (firstMonthTotal + monthlyPrincipal) * 6;
-        document.getElementById("loanResult").innerText =
-          `【元金均等】初月返済額：約 ${firstMonthTotal.toFixed(0)} 円／年間推定：約 ${yearlyEstimate.toFixed(0)} 円`;
-      }
-    }
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>

@@ -1,66 +1,68 @@
 
-function updateAnnualIncome() {
-  const monthly = parseFloat(document.getElementById('monthlyIncome').value);
-  const annual = document.getElementById('annualIncome');
-  if (monthly) {
-    annual.value = (monthly * 12).toFixed(2);
-  } else {
-    annual.value = '';
+function reverseFromYield() {
+  const targetYield = parseFloat(document.getElementById('targetYield').value);
+  const annualRent = parseFloat(document.getElementById('annualRent1').value);
+  if (targetYield && annualRent) {
+    const price = (annualRent / targetYield) * 100;
+    document.getElementById('reverseResult').innerText = "逆算された売却価格: " + price.toFixed(2) + " 万円";
   }
 }
 
 function calculateYield() {
-  const price = parseFloat(document.getElementById('price').value);
-  const income = parseFloat(document.getElementById('annualIncome').value);
-  const result = document.getElementById('yieldResult');
-  if (!price || !income) {
-    result.innerText = "物件価格と月額家賃を入力してください。";
-    return;
+  const price = parseFloat(document.getElementById('propertyPrice2').value);
+  const rent = parseFloat(document.getElementById('annualRent2').value);
+  if (price && rent) {
+    const yieldValue = (rent / price) * 100;
+    document.getElementById('yieldResult2').innerText = "表面利回り: " + yieldValue.toFixed(2) + " %";
   }
-  const yieldValue = (income / price) * 100;
-  result.innerText = `表面利回り： ${yieldValue.toFixed(2)}%`;
 }
 
-function calculateLoan() {
-  const loanAmount = parseFloat(document.getElementById('loanAmount').value);
-  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-  const rate = parseFloat(document.getElementById('interestRate').value) / 100;
-  const years = parseInt(document.getElementById('loanYears').value);
-  const method = document.querySelector('input[name="repaymentMethod"]:checked').value;
-  const result = document.getElementById('loanResult');
+function calculateSellingYield() {
+  const rent = parseFloat(document.getElementById('annualRent3').value);
+  const sellingPrice = parseFloat(document.getElementById('sellingPrice3').value);
+  if (rent && sellingPrice) {
+    const yieldValue = (rent / sellingPrice) * 100;
+    document.getElementById('sellingYieldResult').innerText = "売却価格に対する利回り: " + yieldValue.toFixed(2) + " %";
+  }
+}
 
-  if (!loanAmount || !rate || !years) {
-    result.innerText = "借入金額・金利・年数をすべて入力してください。";
+function calculateAll() {
+  const price = parseFloat(document.getElementById('price').value);
+  const income = parseFloat(document.getElementById('monthlyIncome').value);
+  const displayPrice = document.getElementById('displayPrice');
+  const displayRent = document.getElementById('displayRent');
+  const yieldResult = document.getElementById('yieldResult');
+  const feeResult = document.getElementById('feeResult');
+
+  if (!price || !income) {
+    alert("物件価格と月額家賃を入力してください。");
     return;
   }
 
-  const principal = loanAmount - downPayment;
-  const months = years * 12;
-  const monthlyRate = rate / 12;
+  displayPrice.innerText = "💰 物件価格: " + price.toLocaleString() + " 万円";
+  displayRent.innerText = "🏠 月額家賃収入: " + income.toFixed(2) + " 万円";
 
-  let monthlyPayment, totalPayment;
+  const yieldValue = ((income * 12) / price) * 100;
+  yieldResult.innerText = "📉 表面利回り: " + yieldValue.toFixed(2) + " %";
 
-  if (method === "equalPrincipalInterest") {
-    // 元利均等返済
-    monthlyPayment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
-    totalPayment = monthlyPayment * months;
+  let fee = 0;
+  if (price <= 800) {
+    fee = 33;
   } else {
-    // 元金均等返済
-    const principalPerMonth = principal / months;
-    let total = 0;
-    for (let i = 0; i < months; i++) {
-      const interest = (principal - principalPerMonth * i) * monthlyRate;
-      total += principalPerMonth + interest;
+    let remaining = price;
+    if (remaining > 400) {
+      fee += (remaining - 400) * 0.03;
+      remaining = 400;
     }
-    monthlyPayment = principalPerMonth + principal * monthlyRate; // 初月返済額
-    totalPayment = total;
+    if (remaining > 200) {
+      fee += (remaining - 200) * 0.04;
+      remaining = 200;
+    }
+    if (remaining > 0) {
+      fee += remaining * 0.05;
+    }
+    fee *= 1.1;
   }
 
-  const annualPayment = monthlyPayment * 12;
-
-  result.innerHTML = `
-    <strong>月額返済額（初月）：</strong> ${monthlyPayment.toFixed(0)} 万円<br>
-    <strong>年間返済額（概算）：</strong> ${annualPayment.toFixed(0)} 万円<br>
-    <strong>返済総額：</strong> ${totalPayment.toFixed(0)} 万円
-  `;
+  feeResult.innerText = "📌 仲介手数料: " + fee.toFixed(2) + " 万円（税込）";
 }
