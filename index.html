@@ -1,64 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>💰利回り計算💰</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>竹1 - 表面利回り計算機</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
   <div class="container">
-    <h1>💰利回り計算💰</h1>
+    <h1>竹1 表面利回り計算機</h1>
+    <label for="price">物件価格（万円）</label>
+    <input type="number" id="price" placeholder="例：2000">
 
-    <h2>① 希望利回りから売却価格を逆算</h2>
-    <label>希望利回り（%）</label>
-    <input id="targetYield" type="number" placeholder="例：8">
-    <label>月額家賃収入（万円）</label>
-    <input id="monthlyRent1" type="number" placeholder="例：8.0">
-    <label>年間家賃収入（万円）</label>
-    <input id="annualRent1" type="number" placeholder="例：96">
-    <button onclick="reverseFromYield()">📐 売却価格を逆算</button>
-    <p id="reverseResult"></p>
+    <label for="rent">月額家賃（万円）</label>
+    <input type="number" id="rent" placeholder="例：10">
 
-    <h2>② 表面利回りを計算</h2>
-    <label>物件価格（万円）</label>
-    <input id="propertyPrice2" type="number" placeholder="例：1200">
-    <label>月額家賃収入（万円）</label>
-    <input id="monthlyRent2" type="number" placeholder="例：8.0">
-    <label>年間家賃収入（万円）</label>
-    <input id="annualRent2" type="number" placeholder="例：96">
-    <button onclick="calculateYield()">📊 利回りを計算</button>
-    <p id="yieldResult2"></p>
+    <button onclick="calculateYield()">📊 計算する</button>
 
-    <h2>③ 売却価格に対する利回り</h2>
-    <label>月額家賃収入（万円）</label>
-    <input id="monthlyRent3" type="number" placeholder="例：8.0">
-    <label>年間家賃収入（万円）</label>
-    <input id="annualRent3" type="number" placeholder="例：96">
-    <label>売却価格（万円）</label>
-    <input id="sellingPrice3" type="number" placeholder="例：1300">
-    <button onclick="calculateSellingYield()">📈 売却利回りを計算</button>
-    <p id="sellingYieldResult"></p>
-
-    <h2>④ 表面利回り・仲介手数料</h2>
-    <label>物件価格（万円）</label>
-    <input id="price" type="number" placeholder="例：1200">
-    <label>月額家賃収入（万円）</label>
-    <input id="monthlyIncome" type="number" placeholder="例：8.0">
-    <label>年間家賃収入（万円）</label>
-    <input id="annualIncome" type="number" placeholder="例：96">
-    <button onclick="calculateAll()">📊 一括計算</button>
-
-    <h3>📋 結果</h3>
-    <p id="displayPrice"></p>
-    <p id="displayRent"></p>
-    <p id="yieldResult"></p>
-    <p id="feeResult"></p>
+    <div id="result"></div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
